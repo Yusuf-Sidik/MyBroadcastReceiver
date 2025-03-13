@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.mybroadcastreceiver.databinding.ActivityMainBinding
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         const val ACTION_DOWNLOAD_STATUS = "download_status"
     }
 
-    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+//    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -41,7 +42,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
         val downloadIntentFilter = IntentFilter(ACTION_DOWNLOAD_STATUS)
-        registerReceiver(downloadReceiver,downloadIntentFilter)
+        ContextCompat.registerReceiver(
+            this,
+            downloadReceiver,
+            downloadIntentFilter,
+            ContextCompat.RECEIVER_EXPORTED
+        )
+//        registerReceiver(downloadReceiver,downloadIntentFilter)
     }
 
     var requestPermissionLauncher = registerForActivityResult(
