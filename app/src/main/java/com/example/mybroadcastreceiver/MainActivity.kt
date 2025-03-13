@@ -1,6 +1,10 @@
 package com.example.mybroadcastreceiver
 
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,11 +19,14 @@ import com.example.mybroadcastreceiver.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
+    private lateinit var downloadReceiver: BroadcastReceiver
     private var binding: ActivityMainBinding? = null
 
     companion object{
         const val ACTION_DOWNLOAD_STATUS = "download_status"
     }
+
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -27,6 +34,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         binding?.btnPermission?.setOnClickListener(this)
         binding?.btnDownload?.setOnClickListener(this)
+
+        downloadReceiver = object : BroadcastReceiver(){
+            override fun onReceive(context: Context?, intent: Intent?) {
+                Toast.makeText(context, "Download Selesai", Toast.LENGTH_SHORT).show()
+            }
+        }
+        val downloadIntentFilter = IntentFilter(ACTION_DOWNLOAD_STATUS)
+        registerReceiver(downloadReceiver,downloadIntentFilter)
     }
 
     var requestPermissionLauncher = registerForActivityResult(
@@ -56,6 +71,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        unregisterReceiver(downloadReceiver)
         binding = null
     }
 }
