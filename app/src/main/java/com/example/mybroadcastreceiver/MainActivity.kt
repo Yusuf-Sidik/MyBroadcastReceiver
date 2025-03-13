@@ -1,6 +1,9 @@
 package com.example.mybroadcastreceiver
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -13,12 +16,17 @@ import com.example.mybroadcastreceiver.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private var binding: ActivityMainBinding? = null
+
+    companion object{
+        const val ACTION_DOWNLOAD_STATUS = "download_status"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
         binding?.btnPermission?.setOnClickListener(this)
+        binding?.btnDownload?.setOnClickListener(this)
     }
 
     var requestPermissionLauncher = registerForActivityResult(
@@ -34,6 +42,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.btn_permission -> requestPermissionLauncher.launch(android.Manifest.permission.RECEIVE_SMS)
+            R.id.btn_download -> {
+                // membuat sebuah Intent dengan action, simulasi download process in 3 seconds
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val notifyFinishIntent = Intent().setAction(ACTION_DOWNLOAD_STATUS)
+                    sendBroadcast(notifyFinishIntent)
+                },
+                    3000
+                )
+            }
         }
     }
 
